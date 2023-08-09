@@ -36,7 +36,15 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    proxy: {
+      // 如果请求地址以/api打头,就出触发代理机制
+      // http://localhost:9588/api/login -> http://localhost:3000/api/login
+      '/api': {
+        target: 'http://localhost:3000' // 我们要代理的真实接口地址
+      }
+    }
+    // 在项目中开启mock-server
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
