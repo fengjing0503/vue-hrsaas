@@ -1,10 +1,11 @@
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { login } from '@/api/user'
-
+import { login, getProfile, getUserInfo } from '@/api/user'
+import { Message } from 'element-ui'
 export default {
   namespaced: true,
   state: {
-    token: getToken() || null
+    token: getToken() || null,
+    userInfo: {}
   },
   mutations: {
     updateToken(state, token) {
@@ -14,6 +15,12 @@ export default {
     removeToken(state) {
       state.token = ''
       removeToken()
+    },
+    updatedUserInfo(state, userInfo) {
+      state.userInfo = userInfo
+    },
+    removeUserInfo(state, userInfo) {
+      state.userInfo = ''
     }
   },
   actions: {
@@ -26,6 +33,19 @@ export default {
       // 在actions中，如果要修改state，还是要调用mutaions
       // context.commit('mutation名'， 参数)
       context.commit('updateToken', res.data)
+      Message.success(res.message)
+    },
+    async userProfile(context) {
+      const res = await getProfile()
+      const res2 = await getUserInfo(res.data.userId)
+      console.log(res)
+      console.log(res2)
+      context.commit('updatedUserInfo', { ...res.data, ...res2.data })
+    },
+    // 删除token
+    logout(context) {
+      context.commit('removeToken')
+      context.commit('removeUserInfo')
     }
   }
 }

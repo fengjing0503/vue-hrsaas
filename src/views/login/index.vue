@@ -48,8 +48,6 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" class="loginBtn" @click.native.prevent="handleLogin">登录</el-button>
 
-      <el-button @click="getuserp">获取数据测试</el-button>
-
       <div class="tips">
         <span style="margin-right:20px;">账号: 13800000002</span>
         <span> 密码: 123456</span>
@@ -61,7 +59,6 @@
 
 <script>
 import { validMobile } from '@/utils/validate'
-import { getUserProfile } from '@/api/user'
 export default {
   name: 'Login',
   data() {
@@ -117,6 +114,7 @@ export default {
         if (valid) {
           try {
             await this.$store.dispatch('user/userLogin', this.loginForm)
+            this.$router.push(this.$route.query.return_url || '/')
           } catch (error) {
             this.$message.error(error.message)
           }
@@ -130,12 +128,8 @@ export default {
           // }
         }
       })
-    },
-    async getuserp() {
-      const res = await getUserProfile()
-      console.log(res)
-      console.log(111)
     }
+
   }
 }
 </script>

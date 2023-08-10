@@ -1,5 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
+import router from '@/router'
 const service = axios.create({
   // http://ihrm-java.itheima.net
   // http://localhost:3000
@@ -31,9 +32,22 @@ service.interceptors.response.use(function(response) {
     // 抛出错误
     return Promise.reject(new Error(response.data.message))
   }
-}, function(error) {
+}, async function(error) {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
+  if (error.response.data.code === 10002) {
+    console.log('token失效')
+    // token失效,删除token
+    await store.dispatch('user/logout')
+    // 跳转登录页
+    router.push({
+      path: '/login',
+      query: {
+        // return_url: router.currentRoute.fullPath
+        return_url: location.hash.substring(1)
+      }
+    })
+  }
   return Promise.reject(error)
 })
 
