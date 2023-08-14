@@ -115,3 +115,23 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+export function tranListToTreeData(list) {
+  const treeList = []
+  const map = {}
+  list.forEach(item => {
+    if (!item.children) {
+      item.children = []
+    }
+    map[item.id] = item
+  })
+  list.forEach(item => {
+    const parent = map[item.pid]
+    if (parent) {
+      parent.children.push(item)
+    } else {
+      treeList.push(item)
+    }
+  })
+  return treeList
+}

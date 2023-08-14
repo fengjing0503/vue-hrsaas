@@ -74,7 +74,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '123456'
+        password: '888itcast.CN764%...'
       },
       loginRules: {
         // required: true  必填项
@@ -83,7 +83,7 @@ export default {
         // message: 错误提示消息
         mobile: [{ required: true, trigger: 'blur', message: '请输入手机号', validator: validateMobile }],
         password: [{ required: true, trigger: 'blur', message: '密码不能为空' },
-          { min: 6, max: 16, message: '密码的长度在6-16位之间 ', trigger: 'blur' }]
+          { min: 6, max: 26, message: '密码的长度在6-16位之间 ', trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',

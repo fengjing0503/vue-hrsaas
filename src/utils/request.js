@@ -2,11 +2,12 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 const service = axios.create({
-  // http://ihrm-java.itheima.net
+  // http://ihrm-java.itheima.net,
   // http://localhost:3000
   // baseURL: 'https://ihrm.itheima.net',
+  // baseURL: 'http://ihrm-java.itheima.net/api',
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  timeout: 1000 // 超时时间
+  timeout: 5000 // 超时时间
 })
 
 // 添加请求拦截器

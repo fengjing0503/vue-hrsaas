@@ -2,7 +2,7 @@ import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style
 import router from './router'
 import store from '@/store'
-
+import getPageTitle from '@/utils/get-page-title'
 const whiteList = ['/login', '/404']
 // 全局前置路由守卫
 //  to:  要去哪个页面
@@ -22,7 +22,12 @@ router.beforeEach(async(to, from, next) => {
     // 必须拿到用户信息才可以进入首页,否则进不去
     // 可以避免出现token过期依然进入首页闪回登录页,优化用户体验
     // 进入首页后一定可以拿到用户信息
-    await store.dispatch('user/userProfile')
+
+    // 加判断 如果有userId,就不需要发请求了,没有才发
+    const userId = store.getters.userId
+    if (userId) {
+      await store.dispatch('user/userProfile')
+    }
     if (to.path === '/login') {
       next('/')
       NProgress.done()
@@ -39,7 +44,8 @@ router.beforeEach(async(to, from, next) => {
     }
   }
 })
-router.afterEach(() => {
+router.afterEach((to, from) => {
+  document.title = getPageTitle(to.meta.title)
   NProgress.done()
 })
 

@@ -40,7 +40,9 @@ module.exports = {
       // 如果请求地址以/api打头,就出触发代理机制
       // http://localhost:9588/api/login -> http://localhost:3000/api/login
       '/api': {
-        target: 'http://localhost:3000' // 我们要代理的真实接口地址
+        // target: 'http://localhost:3000' // 我们要代理的真实接口地址
+        target: 'http://ihrm-java.itheima.net' // 我们要代理的真实接口地址
+        // target: 'https://ihrm.itheima.net' // 我们要代理的真实接口地址
       }
     }
     // 在项目中开启mock-server
