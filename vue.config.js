@@ -13,7 +13,7 @@ const name = defaultSettings.title || 'vue Admin Template' // page title
 // For example, Mac: sudo npm run
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
-const port = process.env.port || process.env.npm_config_port || 9528 // dev port
+const port = process.env.port || process.env.npm_config_port || 8888 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -40,8 +40,8 @@ module.exports = {
       // 如果请求地址以/api打头,就出触发代理机制
       // http://localhost:9588/api/login -> http://localhost:3000/api/login
       '/api': {
-        // target: 'http://localhost:3000' // 我们要代理的真实接口地址
-        target: 'http://ihrm-java.itheima.net' // 我们要代理的真实接口地址
+        target: 'http://192.168.31.123:3000' // 我们要代理的真实接口地址
+        // target: 'http://ihrm-java.itheima.net' // 我们要代理的真实接口地址
         // target: 'https://ihrm.itheima.net' // 我们要代理的真实接口地址
       }
     }

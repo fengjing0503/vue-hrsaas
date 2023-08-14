@@ -74,7 +74,7 @@ export default {
     return {
       loginForm: {
         mobile: '13800000002',
-        password: '888itcast.CN764%...'
+        password: '123456'
       },
       loginRules: {
         // required: true  必填项
