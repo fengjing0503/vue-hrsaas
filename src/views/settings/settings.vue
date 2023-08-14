@@ -7,7 +7,7 @@
           <el-tab-pane label="角色管理">
             <!-- 新增角色按钮 -->
             <el-row style="height:60px">
-              <el-button icon="el-icon-plus" size="small" type="primary" @click="showDialog=true">新增角色</el-button>
+              <el-button icon="el-icon-plus" size="small" type="primary" @click="hAdd">新增角色</el-button>
             </el-row>
             <!-- 表格 -->
             <el-table :data="roles">
@@ -17,7 +17,7 @@
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="primary" @click="hEdit(scope.row)">编辑</el-button>
                   <el-button size="small" type="danger" @click="hDel(scope.row.id)">删除</el-button>
                 </template>
               </el-table-column>
@@ -49,10 +49,11 @@
 
     <!-- 新增弹框 -->
     <el-dialog
-      title="编辑弹层"
+      :title="isEdit?'编辑':'新增'"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
       :visible.sync="showDialog"
+      @close="hClose"
     >
       <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="100px">
         <el-form-item label="角色名称" prop="name">
@@ -74,10 +75,12 @@
 </template>
 
 <script>
-import { getRoles, delrolesById } from '@/api/setting'
+import { getRoles, delrolesById, addRole, editRoleById } from '@/api/setting'
+
 export default {
   data() {
     return {
+      isEdit: false,
       pageParams: {
         page: 1,
         pagesize: 5
@@ -92,6 +95,11 @@ export default {
       rules: {
         name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
       }
+    }
+  },
+  computed: {
+    maxNum() {
+      return Math.ceil(this.total / this.pageParams.pagesize)
     }
   },
   created() {
@@ -138,7 +146,45 @@ export default {
         this.loadRoles()
       }
     },
-    hSubmit() {}
+    hEdit(row) {
+      this.showDialog = true
+      this.roleForm = { ...row }
+      this.isEdit = true
+    },
+    hAdd() {
+      this.showDialog = true
+      this.isEdit = false
+    },
+    async hSubmit() {
+      const valid = await this.$refs.roleForm.validate().catch(e => e)
+      if (!valid) return
+      this.isEdit ? this.doEdit() : this.doAdd()
+    },
+    async doAdd() {
+      const res = await addRole(this.roleForm).catch(e => { this.$message.error(e.message) })
+      this.$message.success(res.message)
+      if (this.total % this.pageParams.pagesize === 0) {
+        this.pageParams.page = this.maxNum + 1
+        this.total++
+      } else {
+        this.pageParams.page = this.maxNum
+      }
+      this.loadRoles()
+      this.showDialog = false
+    },
+    async doEdit() {
+      const res = await editRoleById(this.roleForm).catch(e => { this.$message.error(e.message) })
+      this.$message.success(res.message)
+      this.loadRoles()
+      this.showDialog = false
+    },
+    hClose() {
+      this.roleForm = {
+        name: '',
+        description: ''
+      }
+      this.$refs.roleForm.resetFields()
+    }
   }
 }
 </script>

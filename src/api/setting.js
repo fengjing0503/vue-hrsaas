@@ -14,3 +14,19 @@ export function delrolesById(id) {
     method: 'DELETE'
   })
 }
+
+export function addRole(data) {
+  return request({
+    url: `/sys/role`,
+    method: 'POST',
+    data
+  })
+}
+
+export function editRoleById(data) {
+  return request({
+    url: `/sys/role/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
