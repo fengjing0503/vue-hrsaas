@@ -6,9 +6,9 @@
           <span>总记录数: 16 条</span>
         </template>
         <template #right>
-          <el-button type="warning" size="small">excel导入</el-button>
-          <el-button type="danger" size="small">excel导出</el-button>
-          <el-button type="primary" size="small">新增员工</el-button>
+          <el-button type="warning" size="small" @click="$router.push('/employees/import')">excel导入</el-button>
+          <el-button type="danger" size="small" @click="hExport">excel导出</el-button>
+          <el-button type="primary" size="small" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
 
@@ -23,34 +23,51 @@
             </template>
           </el-table-column>
           <el-table-column label="部门" prop="departmentName" />
-          <el-table-column label="入职时间" prop="timeOfEntry" />
+          <el-table-column sortable label="入职时间" prop="timeOfEntry" />
           <el-table-column label="账户状态" />
           <el-table-column label="操作" width="280">
-            <template>
+            <template slot-scope="{row}">
               <el-button type="text" size="small">查看</el-button>
               <el-button type="text" size="small">分配角色</el-button>
-              <el-button type="text" size="small">删除</el-button>
+              <el-button type="text" size="small" @click="hDel(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
         <!-- 分页组件 -->
         <el-row type="flex" justify="center" align="middle" style="height: 60px">
-          <el-pagination layout="prev, pager, next" />
+          <el-pagination
+            :current-page="pageParams.page"
+            :page-sizes="[10,15,30,50]"
+            :page-size="pageParams.size"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            @size-change="hSizeChange"
+            @current-change="hCurrentChange"
+          />
         </el-row>
       </el-card>
     </div>
+    <el-dialog title="新增员工" :visible.sync="showDialog">
+      <addor-edit v-if="showDialog" @close="hClose" @hSuccess="hSuccess" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getEmployees } from '@/api/employess'
+import addorEdit from './empDialog.vue'
+import { delEmployee, getEmployees } from '@/api/employess'
 import empConstant from '@/constant/employees'
-const obj = {}
-empConstant.hireType.forEach(item => {
-  obj[item.id] = item.value
-})
-console.log(obj[1])
+// forEach写法
+// const hireMap = {}
+// empConstant.hireType.forEach(item => {
+//   hireMap[item.id] = item.value
+// })
+// reduce写法
+const hireMap = empConstant.hireType.reduce((hireMap, item) => ({ ...hireMap, [item.id]: item.value }), {})
 export default {
+  components: {
+    addorEdit
+  },
   data() {
     return {
       pageParams: {
@@ -58,7 +75,8 @@ export default {
         size: 10
       },
       total: 0,
-      employees: []
+      employees: [],
+      showDialog: false
     }
   },
   created() {
@@ -66,14 +84,95 @@ export default {
   },
   methods: {
     async loadEmployess(pageParams) {
-      const res = await getEmployees(pageParams).catch(e => console.log('获取员工信息失败', e))
-      this.$message.success(res.message)
+      const res = await getEmployees(this.pageParams).catch(e => console.log('获取员工信息失败', e))
+      // this.$message.success(res.message)
       this.employees = res.data.rows
       this.total = res.data.total
       console.log(res)
     },
     formatEmployement(code) {
-      return obj[code]
+      return hireMap[code]
+    },
+    hSizeChange(val) {
+      // console.log(val)
+      this.pageParams.size = val
+      this.loadEmployess()
+    },
+    hCurrentChange(val) {
+      this.pageParams.page = val
+      this.loadEmployess()
+    },
+    // 删除
+    async hDel(id) {
+      const result = await this.$confirm('确定删除吗', '提示', { type: 'warning' })
+      if (!result) return
+      const res = await delEmployee(id).catch(e => this.$message(e.message))
+      this.$message.success(res.message)
+      this.loadEmployess()
+      if (this.employees.length === 1 && this.pageParams.page > 1) {
+        this.pageParams.page--
+        this.loadEmployess()
+      }
+    },
+    // 取消
+    hClose() {
+      this.showDialog = false
+    },
+    // 新增
+    hSuccess() {
+      this.showDialog = false
+      this.total++
+      this.pageParams.page = Math.ceil(this.total / this.pageParams.size)
+      this.loadEmployess()
+    },
+    // 导出Excel
+    async hExport() {
+      const excel = await import('@/vendor/Export2Excel')
+      // excel表示导入的模块对象
+      console.log(excel)
+      // 发请求拿数据
+      const res = await getEmployees({ page: 1, size: this.total }).catch(e => e)
+      if (!res.success) return console.dir(res.message)
+      console.log(res)
+      // 数据转格式
+      const { header, data } = this.format2Excel(res.data.rows)
+      // 导出Excel
+      excel.export_json_to_excel({
+        header, // 表头 必填
+        data, // 具体数据 必填
+        filename: 'excel-list', // 文件名称
+        autoWidth: true, // 宽度是否自适应
+        bookType: 'xlsx' // 生成的文件类型
+      })
+    },
+    format2Excel(list) {
+      const mapInfo = {
+        'id': '编号',
+        'password': '密码',
+        'mobile': '手机号',
+        'username': '姓名',
+        'timeOfEntry': '入职日期',
+        'formOfEmployment': '聘用形式',
+        'correctionTime': '转正日期',
+        'workNumber': '工号',
+        'departmentName': '部门',
+        'staffPhoto': '头像地址'
+      }
+      let header = []
+      let data = []
+
+      if (list.length === 0) return { header, data }
+
+      const obj = list[0]
+      header = Object.keys(obj).map(k => mapInfo[k])
+
+      data = list.map(item => {
+        const k = item.formOfEmployment
+        item.formOfEmployment = hireMap[k]
+        return Object.values(item)
+      })
+
+      return { header, data }
     }
   }
 }

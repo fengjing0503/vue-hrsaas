@@ -116,31 +116,17 @@ export default {
     this.loadDepartments()
   },
   methods: {
-    // async loadDepartments() {
-    //   try {
-    //     const res = await getDepartments()
-    //     console.log(res)
-    //     // const company = res.data.depts.shift()
-    //     // console.log('loadDepartments', company)
-    //     this.list = tranListToTreeData(res.data.depts)
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // },
     async loadDepartments() {
       try {
         const res = await getDepartments()
         console.log(res)
-        // 由于业务中传智教育的pid是:-1，它是最高级的节点
-        // shift 从数组头部取出一个元素
-        const root = res.data.depts.shift()
-        console.log(root)
+        res.data.depts.shift()
+        // console.log('loadDepartments', company)
         this.originList = res.data.depts.map(({ id, pid, code, name }) => ({ id, name, code, pid }))
-        // 用工具函数把 平铺的数组转成 树型数据
-        root.children = tranListToTreeData(res.data.depts)
-        this.list = [root]
-      } catch (err) {
-        console.log(err)
+        console.log(this.originList)
+        this.list = tranListToTreeData(res.data.depts)
+      } catch (error) {
+        console.log(error)
       }
     },
     // 添加
