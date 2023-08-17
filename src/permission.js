@@ -4,6 +4,7 @@ import router from './router'
 import store from '@/store'
 import getPageTitle from '@/utils/get-page-title'
 const whiteList = ['/login', '/404']
+import { asyncRoutes } from '@/router'
 // 全局前置路由守卫
 //  to:  要去哪个页面
 //  from:从哪里来
@@ -25,10 +26,29 @@ router.beforeEach(async(to, from, next) => {
 
     // 加判断 如果有userId,就不需要发请求了,没有才发
     const userId = store.getters.userId
-    if (userId) {
-      await store.dispatch('user/userProfile')
+    // 没有userId才发请求
+    if (!userId) {
+      const menus = await store.dispatch('user/userProfile')
+      // console.log(menus)
+      const filterRoutes = asyncRoutes.filter(item => {
+        // 遍历拿到每个动态路由的名称
+        const routeName = item.children[0].name
+        // console.log(routeName)
+        // 去menus中找到可以访问的路由,筛选到新数组
+        return menus.includes(routeName)
+      })
+      // 将404放在动态路由最后面
+      filterRoutes.push({ path: '*', redirect: '/404', hidden: true })
+      router.addRoutes(filterRoutes)
+      // 将筛选好的数组保存到vuex
+      store.commit('menu/setMenuList', filterRoutes)
+      // 解决刷新出现的白屏bug
+      next({
+        ...to, // next({ ...to })的目的,是保证路由添加完了再进入页面 (可以理解为重进一次)
+        replace: true // 重进一次, 不保留重复历史
+      })
     }
-    if (to.path === '/login') {
+    if (to.path === '/login') { // 如果已经登陆了,就不能去登录页了,强行跳转首页
       next('/')
       NProgress.done()
     } else {

@@ -5,7 +5,7 @@ export default {
   component: Layout,
   children: [{
     path: '',
-    name: 'Settings',
+    name: 'settings',
     component: () => import('@/views/settings/settings.vue'),
     meta: { title: '公司设置', icon: 'settings' }
   }]

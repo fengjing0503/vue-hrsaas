@@ -5,7 +5,7 @@ export default {
   component: Layout,
   children: [{
     path: '',
-    name: 'Departments',
+    name: 'departments',
     component: () => import('@/views/departments/departments.vue'),
     meta: { title: '组织架构', icon: 'tree' }
   }]

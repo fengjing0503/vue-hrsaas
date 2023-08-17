@@ -16,7 +16,7 @@
               <el-table-column label="描述" prop="description" />
               <el-table-column label="操作">
                 <template slot-scope="scope">
-                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button size="small" type="success" @click="hAssgin(scope.row.id)">分配权限</el-button>
                   <el-button size="small" type="primary" @click="hEdit(scope.row)">编辑</el-button>
                   <el-button size="small" type="danger" @click="hDel(scope.row.id)">删除</el-button>
                 </template>
@@ -66,20 +66,26 @@
       <!-- 底部 -->
       <el-row slot="footer" type="flex" justify="center">
         <el-col :span="6">
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="showDialog=false">取消</el-button>
           <el-button size="small" type="primary" @click="hSubmit">确定</el-button>
         </el-col>
       </el-row>
+    </el-dialog>
+    <!-- 分配权限 -->
+    <el-dialog :visible.sync="showDialogAssign">
+      <assignPermission v-if="showDialogAssign" :role-id="roleId" @close="showDialogAssign=false" />
     </el-dialog>
   </div>
 </template>
 
 <script>
 import { getRoles, delrolesById, addRole, editRoleById } from '@/api/setting'
-
+import assignPermission from './assignPermission'
 export default {
+  components: { assignPermission },
   data() {
     return {
+      roleId: '',
       isEdit: false,
       pageParams: {
         page: 1,
@@ -88,6 +94,7 @@ export default {
       roles: [],
       total: 0,
       showDialog: false,
+      showDialogAssign: false,
       roleForm: {
         name: '',
         description: ''
@@ -109,7 +116,7 @@ export default {
     async loadRoles() {
       try {
         const res = await getRoles(this.pageParams)
-        console.log(res)
+        // console.log(res)
         this.roles = res.data.rows
         this.total = res.data.total
       } catch (error) {
@@ -117,7 +124,7 @@ export default {
       }
     },
     hSizeChange(val) {
-      console.log(val)
+      // console.log(val)
       this.pageParams.pagesize = val
       this.loadRoles()
     },
@@ -126,7 +133,7 @@ export default {
       this.loadRoles()
     },
     async hDel(id) {
-      console.log(id)
+      // console.log(id)
       // this.$confirm('确定要删除吗?', '提示', { type: 'warning' }).then(async() => {
       //   try {
       //     const res = await delrolesById(id)
@@ -184,6 +191,10 @@ export default {
         description: ''
       }
       this.$refs.roleForm.resetFields()
+    },
+    hAssgin(id) {
+      this.roleId = id
+      this.showDialogAssign = true
     }
   }
 }

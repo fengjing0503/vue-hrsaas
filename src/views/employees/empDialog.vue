@@ -101,7 +101,7 @@ export default {
     async loadDepartments() {
       if (this.treeData.length > 0) return
       const res = await getDepartments()
-      console.log(res)
+      // console.log(res)
       res.data.depts.shift()
       this.treeData = tranListToTreeData(res.data.depts)
     },

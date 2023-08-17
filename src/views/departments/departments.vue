@@ -5,7 +5,7 @@
         <!-- 用一个行列布局 -->
         <el-row type="flex" justify="space-between" align="middle" style="height: 40px">
           <el-col :span="20">
-            <svg-icon icon-class="gs" /><span> xxxxx有限公司</span>
+            <svg-icon icon-class="gs" /><span> 翻斗花园有限公司</span>
           </el-col>
           <el-col :span="4">
             <el-row type="flex" justify="end">
@@ -48,7 +48,7 @@
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item @click.native="hShowAdd(data.id)">添加子部门</el-dropdown-item>
                         <el-dropdown-item @click.native="hShowEdit(data.id)">修改部门</el-dropdown-item>
-                        <el-dropdown-item v-if="data.children.length===0" @click.native="hDel(data.id)">删除部门</el-dropdown-item>
+                        <el-dropdown-item @click.native="hDel(data.id)">删除部门</el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
                   </el-col>
@@ -119,11 +119,11 @@ export default {
     async loadDepartments() {
       try {
         const res = await getDepartments()
-        console.log(res)
+        // console.log(res)
         res.data.depts.shift()
         // console.log('loadDepartments', company)
         this.originList = res.data.depts.map(({ id, pid, code, name }) => ({ id, name, code, pid }))
-        console.log(this.originList)
+        // console.log(this.originList)
         this.list = tranListToTreeData(res.data.depts)
       } catch (error) {
         console.log(error)
@@ -153,7 +153,7 @@ export default {
     async doDel(id) {
       try {
         const res = await delDepartementById(id)
-        console.log(res)
+        // console.log(res)
         this.loadDepartments()
         this.$message.success(res.message)
       } catch (error) {

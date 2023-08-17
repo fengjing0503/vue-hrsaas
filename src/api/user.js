@@ -24,3 +24,11 @@ export function getUserInfo(id) {
   })
 }
 
+export function updateUserInfoById(data) {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'PUT',
+    data
+  })
+}
+

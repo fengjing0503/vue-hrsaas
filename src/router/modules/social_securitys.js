@@ -5,7 +5,7 @@ export default {
   component: Layout,
   children: [{
     path: '',
-    name: 'Social_securitys',
+    name: 'social_securitys',
     component: () => import('@/views/social_securitys/social_securitys.vue'),
     meta: { title: '社保管理', icon: 'table' }
   }]

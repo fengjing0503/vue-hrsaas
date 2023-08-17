@@ -34,7 +34,7 @@ export default {
       //        [ {'姓名'：'小张'， '手机号': '13712345678'}, {.....} ]
 
       //   excel读取成功了
-      console.log(header, results)
+      // console.log(header, results)
       //   转换成后台可以读取的格式
       const data = this.transExcel(results)
       //   console.log(res)

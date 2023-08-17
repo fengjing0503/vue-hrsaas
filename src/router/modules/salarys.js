@@ -5,7 +5,7 @@ export default {
   component: Layout,
   children: [{
     path: '',
-    name: 'Salarys',
+    name: 'salarys',
     component: () => import('@/views/salarys/salarys.vue'),
     meta: { title: '工资管理', icon: 'money' }
   }]

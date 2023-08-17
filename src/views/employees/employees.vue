@@ -6,8 +6,8 @@
           <span>总记录数: 16 条</span>
         </template>
         <template #right>
-          <el-button type="warning" size="small" @click="$router.push('/employees/import')">excel导入</el-button>
-          <el-button type="danger" size="small" @click="hExport">excel导出</el-button>
+          <el-button v-allow="'import_Excel'" type="warning" size="small" @click="$router.push('/employees/import')">excel导入</el-button>
+          <el-button v-allow="'export_Excel'" type="danger" size="small" @click="hExport">excel导出</el-button>
           <el-button type="primary" size="small" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
@@ -15,6 +15,11 @@
       <el-card style="margin-top: 10px;">
         <el-table :data="employees" border>
           <el-table-column label="序号" type="index" />
+          <el-table-column width="70px" label="头像">
+            <template v-slot="{row}">
+              <image-holder :src="row.staffPhoto" />
+            </template>
+          </el-table-column>
           <el-table-column label="姓名" prop="username" />
           <el-table-column label="工号" prop="workNumber" />
           <el-table-column label="聘用形式">
@@ -27,9 +32,9 @@
           <el-table-column label="账户状态" />
           <el-table-column label="操作" width="280">
             <template slot-scope="{row}">
-              <el-button type="text" size="small">查看</el-button>
-              <el-button type="text" size="small">分配角色</el-button>
-              <el-button type="text" size="small" @click="hDel(row.id)">删除</el-button>
+              <el-button type="text" size="small" @click="$router.push(`/employees/detail/${row.id}`)">查看</el-button>
+              <el-button type="text" size="small" @click="hAssignRole(row)">分配角色</el-button>
+              <el-button v-allow="'delete_employees'" type="text" size="small" @click="hDel(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -50,6 +55,9 @@
     <el-dialog title="新增员工" :visible.sync="showDialog">
       <addor-edit v-if="showDialog" @close="hClose" @hSuccess="hSuccess" />
     </el-dialog>
+    <el-dialog title="分配角色" :visible.sync="showDialogRole">
+      <AssignRole ref="assignRole" :user-id="userId" @close="showDialogRole = false" />
+    </el-dialog>
   </div>
 </template>
 
@@ -57,6 +65,7 @@
 import addorEdit from './empDialog.vue'
 import { delEmployee, getEmployees } from '@/api/employess'
 import empConstant from '@/constant/employees'
+import AssignRole from './assignRole'
 // forEach写法
 // const hireMap = {}
 // empConstant.hireType.forEach(item => {
@@ -66,7 +75,7 @@ import empConstant from '@/constant/employees'
 const hireMap = empConstant.hireType.reduce((hireMap, item) => ({ ...hireMap, [item.id]: item.value }), {})
 export default {
   components: {
-    addorEdit
+    addorEdit, AssignRole
   },
   data() {
     return {
@@ -76,7 +85,9 @@ export default {
       },
       total: 0,
       employees: [],
-      showDialog: false
+      showDialogRole: false,
+      showDialog: false,
+      userId: ''
     }
   },
   created() {
@@ -88,7 +99,7 @@ export default {
       // this.$message.success(res.message)
       this.employees = res.data.rows
       this.total = res.data.total
-      console.log(res)
+      // console.log(res)
     },
     formatEmployement(code) {
       return hireMap[code]
@@ -129,11 +140,11 @@ export default {
     async hExport() {
       const excel = await import('@/vendor/Export2Excel')
       // excel表示导入的模块对象
-      console.log(excel)
+      // console.log(excel)
       // 发请求拿数据
       const res = await getEmployees({ page: 1, size: this.total }).catch(e => e)
       if (!res.success) return console.dir(res.message)
-      console.log(res)
+      // console.log(res)
       // 数据转格式
       const { header, data } = this.format2Excel(res.data.rows)
       // 导出Excel
@@ -173,6 +184,15 @@ export default {
       })
 
       return { header, data }
+    },
+    // 点击分配权限
+    async hAssignRole({ id }) {
+      // console.log('当前要分配角色id是', id)
+      this.showDialogRole = true
+      this.userId = id
+
+      await this.$nextTick()
+      this.$refs.assignRole.lodaRolesById()
     }
   }
 }

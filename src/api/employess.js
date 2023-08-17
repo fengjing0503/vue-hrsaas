@@ -36,3 +36,16 @@ export function importEmployee(data) {
     data
   })
 }
+
+/**
+ * @description: 为用户分配角色
+ * @param {*} data { id:当前用户id, roleIds:选中的角色id组成的数组 }
+ * @return {*}
+ */
+export function assignRoles(data) {
+  return request({
+    url: '/sys/user/assignRoles',
+    data,
+    method: 'put'
+  })
+}

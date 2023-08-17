@@ -26,10 +26,10 @@ export default {
   actions: {
     // data表示接口参数
     async userLogin(context, obj) {
-      console.log('action userLogin', context, obj)
+      // console.log('action userLogin', context, obj)
       // 调用ajax请求去做登陆
       const res = await login(obj)
-      console.log(res)
+      // console.log(res)
       // 在actions中，如果要修改state，还是要调用mutaions
       // context.commit('mutation名'， 参数)
       context.commit('updateToken', res.data)
@@ -38,9 +38,10 @@ export default {
     async userProfile(context) {
       const res = await getProfile()
       const res2 = await getUserInfo(res.data.userId)
-      console.log(res)
-      console.log(res2)
+      // console.log(res)
+      // console.log(res2)
       context.commit('updatedUserInfo', { ...res.data, ...res2.data })
+      return res.data.roles.menus
     },
     // 删除token
     logout(context) {

@@ -36,6 +36,7 @@
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { resetRouter } from '@/router'
 
 export default {
   components: {
@@ -60,6 +61,7 @@ export default {
         cancelButtonText: '取消'
       }).then(async() => {
         await this.$store.dispatch('user/logout')
+        resetRouter()
         // encodeURL: 可以转码中文但不能转符号
         // encodeURIComponent:都可以
         // this.$router.push('/login?return_url=' + encodeURIComponent(this.$route.fullPath))

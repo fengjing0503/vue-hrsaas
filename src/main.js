@@ -32,6 +32,17 @@ Vue.use(GlobalPlugin)
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI)
+
+Vue.directive('allow', {
+  inserted(el, binding) {
+    const points = store.state.user.userInfo.roles.points
+    // console.log(points)
+    if (!points.includes(binding.value)) {
+      el.remove()
+    }
+  }
+})
+
 Vue.config.productionTip = false
 
 new Vue({
