@@ -14,6 +14,7 @@ import router from './router'
 import GlobalPlugin from '@/components'
 import '@/icons' // icon
 import '@/permission' // permission control
+import i18n from '@/lang'
 Vue.use(GlobalPlugin)
 /**
  * If you don't want to use mock-server
@@ -49,6 +50,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  i18n,
   render: h => h(App)
 })
 

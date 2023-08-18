@@ -3,14 +3,16 @@
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <div class="app-breadcrumb">
-      翻斗花园二号楼
+      翻斗花园有限公司
       <span class="breadBtn">体验版</span>
     </div>
 
     <div class="right-menu">
+      <ScreenFull />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="staffPhoto" class="user-avatar">
+          <!-- <img :src="staffPhoto" class="user-avatar"> -->
+          <image-holder :src="staffPhoto" class="user-avatar" width="30px" height="30px" />
           <span class="name">{{ username }}</span>
           <i class="el-icon-caret-bottom" />
         </div>

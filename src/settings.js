@@ -1,7 +1,7 @@
 module.exports = {
 
   // 网页标题
-  title: '风景后台管理系统',
+  title: '人资后台管理系统',
 
   /** 设置固定导航栏
    * @type {boolean} true | false

@@ -39,6 +39,7 @@ export default {
       const res = await assignPerm({ id: this.roleId, permIds: permIds }).catch(e => e)
       if (!res.success) return
       this.$message(res.message)
+      this.$store.dispatch('user/postProfile') // 重新获取用户信息
       this.$emit('close')
     //   console.log(res)
     },

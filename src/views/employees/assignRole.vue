@@ -54,6 +54,7 @@ export default {
       const res = await assignRoles({ id: this.userId, roleIds: this.roleIds }).catch(e => e)
       if (!res.success) return this.$message(res.message)
       this.$message.success(res.message)
+      this.$store.dispatch('user/postProfile') // 重新获取用户信息
       this.$emit('close')
     }
   }

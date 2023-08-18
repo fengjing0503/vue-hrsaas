@@ -4,7 +4,7 @@
     <!-- error插槽：设置如果出错，要显示的内容 -->
     <template #error>
       <!-- 静态资源就近维护：把head.jpg这张图放在这个组件的目录下 -->
-      <img src="./head.png" alt="">
+      <img src="./head.png" :style="{width,height}" alt="">
     </template>
   </el-image>
 </template>
@@ -17,6 +17,14 @@ export default {
     src: {
       type: String,
       default: ''
+    },
+    width: {
+      type: String,
+      default: '50px'
+    },
+    height: {
+      type: String,
+      default: '50px'
     }
   }
 }
@@ -30,9 +38,9 @@ export default {
 .img-container {
     border-radius: 50%;
 
-    ::v-deep img {
-        width: 50px;
-        height: 50px;
-    }
+    // ::v-deep img {
+    //     width: 50px;
+    //     height: 50px;
+    // }
 }
 </style>

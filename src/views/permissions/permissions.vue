@@ -131,6 +131,7 @@ export default {
       if (!res.success) return this.$message.error(res.message) // 错误提醒
       this.$message.success(res.message) // 成功提醒
       this.showDialog = false // 关闭dialog
+      this.$store.dispatch('user/postProfile') // 重新获取用户信息
       this.loadPermissionList() // 从新获取数据
     },
     // 当弹层关闭时，重置表单
@@ -152,7 +153,9 @@ export default {
         const res = await delPermission(id)
         console.log(res)
 
+        this.$store.dispatch('user/postProfile') // 重新获取用户信息
         this.loadPermissionList()
+
         this.$message.success('删除成功')
       } catch (err) {
         // console.log(err)
@@ -182,6 +185,8 @@ export default {
       const res = await updatePermission(this.formData).catch(e => e)
       if (!res.success) return this.$message.error(res.message)
       this.showDialog = false // 关闭dialog
+      this.$store.dispatch('user/postProfile') // 重新获取用户信息
+
       this.loadPermissionList() // 从新获取数据
     }
   }

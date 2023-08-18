@@ -29,7 +29,7 @@
           </el-table-column>
           <el-table-column label="部门" prop="departmentName" />
           <el-table-column sortable label="入职时间" prop="timeOfEntry" />
-          <el-table-column label="账户状态" />
+          <!-- <el-table-column label="账户状态" /> -->
           <el-table-column label="操作" width="280">
             <template slot-scope="{row}">
               <el-button type="text" size="small" @click="$router.push(`/employees/detail/${row.id}`)">查看</el-button>
@@ -134,6 +134,8 @@ export default {
       this.showDialog = false
       this.total++
       this.pageParams.page = Math.ceil(this.total / this.pageParams.size)
+      this.$store.dispatch('user/postProfile') // 重新获取用户信息
+
       this.loadEmployess()
     },
     // 导出Excel
